@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Staatliches&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <h1 id="header"><span>Caffeine Critique</span></h1>
+    <hr />
+    <form id="form" class="form" action="/" method="POST">
+      <div class="form_field">
+        <label for="price" class="form_label">Price</label>
+        <select name="price" id="price" class="form_input form_select" required oninvalid="this.setCustomValidity('You can\'t submit without the price! 🫘')" oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Cheap">Cheap</option>
+          <option value="Average">Average</option>
+          <option value="Expensive">Expensive</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="roast_level" class="form_label">Roast Level</label>
+        <select
+          name="roast_level"
+          id="roast_level"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('You can\'t submit without the roast level! (light is the best) 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Light">Light</option>
+          <option value="Medium">Medium</option>
+          <option value="Medium-dark">Medium-dark</option>
+          <option value="Dark">Dark</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="espresso" class="form_label">Espresso Taste</label>
+        <select
+          name="espresso"
+          id="espresso"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('You can\'t submit without the saying how yummy the espresso is! 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Horrible">Horrible</option>
+          <option value="Mediocre">Mediocre</option>
+          <option value="Good">Good</option>
+          <option value="Exceptional">Exceptional</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="sweetness" class="form_label">Sweetness</label>
+        <select
+          name="sweetness"
+          id="sweetness"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('You can\'t submit without saying how sweet that drink is! 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Subtle">Subtle</option>
+          <option value="Sweet">Sweet</option>
+          <option value="Balanced">Balanced</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="strength" class="form_label">Strength</label>
+        <select
+          name="strength"
+          id="strength"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('You can\'t submit without informing me of how (hopefully not watery) strong the espresso was! 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Weak">Weak</option>
+          <option value="Strong">Strong</option>
+          <option value="Balanced">Balanced</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="house_syrups" class="form_label">House Syrups?</label>
+        <select
+          name="house_syrups"
+          id="house_syrups"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('Surely they have house syrups right... 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="specialty_drinks" class="form_label">Specialty Drinks?</label>
+        <select
+          name="specialty_drinks"
+          id="specialty_drinks"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('Surely they have specialty drinks right... 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="espresso_variety" class="form_label">Espresso Variety?</label>
+        <select
+          name="espresso_variety"
+          id="espresso_variety"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('Surely they have multiple types of beans right... 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="mixed" class="form_label">Mixed?</label>
+        <select name="mixed" id="mixed" class="form_input form_select" required oninvalid="this.setCustomValidity('Surely the barista mixed the drink right... 🫘')" oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+
+      <div class="form_field">
+        <label for="edible_decor" class="form_label">Edible Decor?</label>
+        <select
+          name="edible_decor"
+          id="edible_decor"
+          class="form_input form_select"
+          required
+          oninvalid="this.setCustomValidity('I love it when coffee shops add some edible decor... tell me if it was there! 🫘')"
+          oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="form_submit_container">
+        <input class="form_submit form__input" type="submit" value="Predict🫘" />
+      </div>
+    </form>
+    <script src="/static/script.js"></script>
+    <br />
+    {% if prediction %}
+    <div class="results">
+      <h2>Prediction Results</h2>
+      <p>Predicted Rating (mean): {{ prediction.mean }}</p>
+      <p>Predicted Rating (standard deviation): {{ prediction.std }}</p>
+    </div>
+    {% endif %}
+    <br />
+    <div class="footer">
+        <p>
+        <a href="https://github.com/caymag"> Github</a> &nbsp;|&nbsp;
+        <a href="www.linkedin.com/in/cayden-maguire"> Linkedin</a>
+    </p>
+    </div>
+    
+  </body>
+  <br><br><br>
+</html>
