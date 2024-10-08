@@ -196,5 +196,7 @@ def home():
 
     return render_template("form.html", prediction=prediction)
 
+
+    return redirect("https://www.linkedin.com/in/cayden-maguire")
 if __name__ == '__main__':
     serve(app, host='0.0.0.0', port=8080)
