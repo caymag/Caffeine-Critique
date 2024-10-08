@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from torch.optim import Adam
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -196,4 +197,4 @@ def home():
     return render_template("form.html", prediction=prediction)
 
 if __name__ == '__main__':
-    app.run()
+    serve(app, host='0.0.0.0', port=8080)
