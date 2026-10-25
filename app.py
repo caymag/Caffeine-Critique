@@ -7,7 +7,6 @@ import torch
 from gpytorch.kernels import RBFKernel
 from botorch.models.gp_regression_mixed import MixedSingleTaskGP
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, OneHotEncoder, StandardScaler
-from sklearn.model_selection import train_test_split
 from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from torch.optim import Adam
@@ -50,10 +49,16 @@ for file_name in os.listdir(directory):
 # Convert the list of dictionaries to a DataFrame
 df = pd.DataFrame(data)
 
-columns_to_keep = ['file name', 'location', 'rating', 'price', 'roast level', 'espresso', 'sweetness', 'strength', 'house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']
+columns_to_keep = ['file name', 'location', 'rating', 'price', 'roast level', 'espresso', 'sweetness', 'strength', 'house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor', 'bitter']
 
 # Select only the specified columns that exist
 df = df[[col for col in columns_to_keep if col in df.columns]]
+
+shops = df[['file name', 'location', 'rating']].assign(rating=pd.to_numeric(df['rating']))
+cities = sorted(shops['location'].unique())
+
+# Yes/No fields, one-hot encoded
+binary_columns = ['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor', 'bitter']
 
 # Encoding categorical variables
 label_encoder = LabelEncoder()
@@ -73,34 +78,29 @@ ordinal_encoder_strength = OrdinalEncoder(categories=[['Weak', 'Strong', 'Balanc
 df['strength'] = ordinal_encoder_strength.fit_transform(df[['strength']])
 
 one_hot_encoder = OneHotEncoder()
-encoded_columns = one_hot_encoder.fit_transform(df[['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']])
-encoded_df = pd.DataFrame(encoded_columns.toarray(), columns=one_hot_encoder.get_feature_names_out(['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']))
+encoded_columns = one_hot_encoder.fit_transform(df[binary_columns])
+encoded_df = pd.DataFrame(encoded_columns.toarray(), columns=one_hot_encoder.get_feature_names_out(binary_columns))
 df = pd.concat([df, encoded_df], axis=1)
 
-df.drop(columns=['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor'], inplace=True)
+df.drop(columns=binary_columns, inplace=True)
 
 # Prepare the data for training
 x = df.drop(columns=['file name', 'rating', 'location'])
 y = df['rating']
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=63)
-
 # Botorch mixed model uses a specialized kernel for categorical data 
 categorical_columns = ['roast level', 'price', 'espresso', 'sweetness', 'strength']
-categorical_columns += list(one_hot_encoder.get_feature_names_out(['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']))
+categorical_columns += list(one_hot_encoder.get_feature_names_out(binary_columns))
 
 cat_dims = [x.columns.get_loc(col) for col in categorical_columns if col in x.columns]
 
 # Standardize the target data (rating)
 target_scaler = StandardScaler()
-y_train_scaled = target_scaler.fit_transform(y_train.values.reshape(-1, 1))
-y_test_scaled = target_scaler.transform(y_test.values.reshape(-1, 1))
+y_scaled = target_scaler.fit_transform(y.values.reshape(-1, 1))
 
 # Convert arrays to tensors; use 64 bit floating point number
-x_train_tensor = torch.tensor(x_train.values, dtype=torch.float64)
-x_test_tensor = torch.tensor(x_test.values, dtype=torch.float64)
-y_train_tensor = torch.tensor(y_train_scaled, dtype=torch.float64).squeeze()
-y_test_tensor = torch.tensor(y_test_scaled, dtype=torch.float64).squeeze()
+x_train_tensor = torch.tensor(x.values, dtype=torch.float64)
+y_train_tensor = torch.tensor(y_scaled, dtype=torch.float64).squeeze()
 
 # Create the MixedSingleTaskGP model
 class MyMixedSingleTaskGP(MixedSingleTaskGP):
@@ -159,7 +159,8 @@ def home():
             'specialty drinks': request.form.get('specialty_drinks'),
             'espresso variety': request.form.get('espresso_variety'),
             'mixed': request.form.get('mixed'),
-            'edible decor': request.form.get('edible_decor')
+            'edible decor': request.form.get('edible_decor'),
+            'bitter': request.form.get('bitter')
         }
         for key, value in new_data.items():
             if value not in ALLOWED_VALUES[key]:
@@ -174,10 +175,10 @@ def home():
         new_data_df['sweetness'] = ordinal_encoder_sweetness.transform(new_data_df[['sweetness']])
         new_data_df['strength'] = ordinal_encoder_strength.transform(new_data_df[['strength']])
 
-        new_encoded_columns = one_hot_encoder.transform(new_data_df[['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']])
-        new_encoded_df = pd.DataFrame(new_encoded_columns.toarray(), columns=one_hot_encoder.get_feature_names_out(['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']))
+        new_encoded_columns = one_hot_encoder.transform(new_data_df[binary_columns])
+        new_encoded_df = pd.DataFrame(new_encoded_columns.toarray(), columns=one_hot_encoder.get_feature_names_out(binary_columns))
 
-        new_data_df = pd.concat([new_data_df.drop(columns=['house syrups', 'specialty drinks', 'espresso variety', 'mixed', 'edible decor']), new_encoded_df], axis=1)
+        new_data_df = pd.concat([new_data_df.drop(columns=binary_columns), new_encoded_df], axis=1)
 
         new_x_tensor = torch.tensor(new_data_df.values, dtype=torch.float64)
 
@@ -195,6 +196,14 @@ def home():
         }
 
     return render_template("form.html", prediction=prediction)
+
+@app.route('/shops')
+def shop_list():
+    city = request.args.get('city', '')
+    sort = request.args.get('sort', 'desc')
+    rows = shops[shops['location'] == city] if city else shops
+    rows = rows.sort_values('rating', ascending=(sort == 'asc'))
+    return render_template("shops.html", shops=rows.to_dict('records'), cities=cities, city=city, sort=sort)
 
 if __name__ == '__main__':
     serve(app, host='0.0.0.0', port=8080)

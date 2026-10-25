@@ -156,6 +156,15 @@
           <option value="No">No</option>
         </select>
       </div>
+
+      <div class="form_field">
+        <label for="bitter" class="form_label">Bitter?</label>
+        <select name="bitter" id="bitter" class="form_input form_select" required oninvalid="this.setCustomValidity('Was it bitter? Be honest! 🫘')" oninput="setCustomValidity('')">
+          <option disabled selected value>Select...</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
       <div class="form_submit_container">
         <input class="form_submit form__input" type="submit" value="Predict🫘" />
       </div>
@@ -172,6 +181,7 @@
     <br />
     <div class="footer">
       <p>
+        <a href="/shops">All Shops</a> &nbsp;|&nbsp;
         <a href="https://github.com/caymag" target="_blank"> Github</a> &nbsp;|&nbsp;
         <a href="https://linkedin.com/in/cayden-maguire" target="_blank">Linkedin</a>
       </p>

@@ -164,3 +164,26 @@ body::after {
 }
 
 
+
+.shops_filter {
+  opacity: 1;
+  animation: none;
+  align-items: flex-end;
+}
+
+.shops_table {
+  width: min(90%, 40rem);
+  border-collapse: collapse;
+}
+
+.shops_table th,
+.shops_table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.shops_table td:last-child,
+.shops_table th:last-child {
+  text-align: right;
+}
